@@ -1,4 +1,9 @@
+import('./style.css');
+
 $(document).ready(function () {
+
+    var frlSP = `https://www.edeptec.com/feeds/posts/default/?alt=json-in-script&max-results=500`
+var month_format = [, "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
 
     const DOMitems = $('.post-searched__container');
     let postsPageSearch = $("#postsPageSearch");
@@ -85,6 +90,7 @@ $(document).ready(function () {
             function nbd(baseDeDatos) {
                 let numeroTotalDeProductos = baseDeDatos.length;
                 let pageCont = Math.ceil(numeroTotalDeProductos / productosPorPagina);
+                pagination.html("");
                 for (let i = 1; i <= pageCont; i++) {
                     pagination.append('<li ><a href = "#" name = "popo" class = "page-number">' + i + '</a></li>');
                 }
