@@ -1,0 +1,2 @@
+var frlSP = `https://www.edeptec.com/feeds/posts/default/?alt=json-in-script&max-results=500`
+var month_format = [, "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
