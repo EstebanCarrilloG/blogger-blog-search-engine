@@ -1,8 +1,8 @@
 import("./style.css");
 
 $(document).ready(function () {
-  var frlSP = `https://www.edeptec.com/feeds/posts/default/?alt=json-in-script&max-results=500`;
-  var month_format = [
+  const blogUrl = `https://www.edeptec.com/feeds/posts/default/?alt=json-in-script&max-results=500`;
+  let month_format = [
     ,
     "Jan",
     "Feb",
@@ -23,28 +23,26 @@ $(document).ready(function () {
   let postPageSearchBtn = $("#postPageSearchBtn");
   let textoDeBusqueda = $(".searchText");
   let searchInputTitle = $(".search-input__logo");
-  let numeroDePaginaTop = $(".pagination-container.top-1");
-  let pagination = $("#pagination");
-  let linkAlPost = "";
+  let PaginationInfoTop = $(".pagination-container.top-1");
+  let paginationContainer = $("#pagination");
   let svg_edeptec = $(".header-logo a").html();
 
-  let re = new RegExp(/^[A-Za-z0-9\s]+$/g);
-
   $.ajax({
-    url: frlSP,
+    url: blogUrl,
     type: "get",
     dataType: "jsonp",
-    success: function (e) {
-      postsPageSearch.keydown(function (enterKey) {
-        if (enterKey.keyCode === 13) {
-          buscarDb();
+    success: function (dataBase) {
+      postsPageSearch.keydown(function (Key) {
+        if (Key.keyCode === 13) {
+          textValidation(dataBase);
         }
       });
       postPageSearchBtn.click(function () {
-        buscarDb();
+        textValidation(dataBase);
       });
 
-      function buscarDb() {
+      function textValidation(dataBase) {
+        let re = new RegExp(/^[A-Za-z0-9\s]+$/g);
         let text = postsPageSearch.val().toLowerCase();
         text = text.replace(/\s\s+/g, "\n");
         text.trim();
@@ -53,149 +51,166 @@ $(document).ready(function () {
             "Error, ingrese un termino de busqueda con numeros o letras."
           );
           searchInputTitle.show();
-          numeroDePaginaTop.html("");
+          PaginationInfoTop.html("");
           DOMitems.html("");
-          pagination.html("");
+          paginationContainer.html("");
         } else {
           searchInputTitle.hide();
-          renderizarProductos(e, text);
+          DOMitems.text("Cargando...");
+          setTimeout(() => {
+            dbFiltering(dataBase, text);
+          }, 1000);
         }
       }
 
-      function renderizarProductos(e, text) {
+      function dbFiltering(dataBase, text) {
         DOMitems.html("");
         let tagsArray = [];
-        let tagsString;
-        let titleSearchEdeptec = e.feed.entry.filter((catTerm) => {
-          let postsTitleS = catTerm.title.$t.toLowerCase();
-          let postsContentS = catTerm.content.$t.toLowerCase();
-          let postsContentSinEspacios = postsContentS.replace("\n", "");
+        let tagsString = "";
+
+        let filteredResults = dataBase.feed.entry.filter((posts) => {
+          let postsTitle = posts.title.$t.toLowerCase();
+          let postsContent = posts.content.$t.toLowerCase();
+          let postContentWithoutSpaces = postsContent.replace("\n", "");
           tagsArray.push(
-            catTerm.category.map((postsTerms) => {
+            ...posts.category.map((postsTerms) => {
               return postsTerms.term;
             })
           );
-          for (let kk = 0; kk < tagsArray.length; kk++) {
-            tagsString = tagsArray[kk].toString();
+
+          for (let i = 0; i < tagsArray.length; i++) {
+            tagsString = tagsArray[i].toString();
           }
           let tagsText = tagsString.toLowerCase();
+
           if (tagsText.indexOf(text) !== -1) {
             return tagsText.indexOf(text) !== -1;
           }
-          if (postsTitleS.indexOf(text) !== -1) {
-            return postsTitleS;
+          if (postsTitle.indexOf(text) !== -1) {
+            return postsTitle;
           }
-          if (postsContentSinEspacios.indexOf(text) !== -1) {
-            return postsContentSinEspacios;
+          if (postContentWithoutSpaces.indexOf(text) !== -1) {
+            return postContentWithoutSpaces;
           }
         });
-        if (titleSearchEdeptec.length) {
+
+        if (filteredResults.length) {
           textoDeBusqueda.html(
-            `Se encontaron <b id = "nResultados">${titleSearchEdeptec.length}</b> resultados para el termino de busqueda : <b>"${text}"</b>`
+            `Se encontaron <b id = "nResultados">${filteredResults.length}</b> resultados para el termino de busqueda : <b>"${text}"</b>`
           );
 
-          nbd(titleSearchEdeptec);
-          showDbContent(titleSearchEdeptec, 1);
+          setPagination(filteredResults);
+          showDbContent(filteredResults, 1);
         } else {
           textoDeBusqueda.html(
             `No Se encontaron resultados para el termino de busqueda : <b>"${text}"</b>`
           );
-          numeroDePaginaTop.html("");
-          pagination.html("");
+          PaginationInfoTop.html("");
+          paginationContainer.html("");
         }
       }
-      let productosPorPagina = 10;
+      let postsPerPage = 10;
 
-      function nbd(baseDeDatos) {
-        let numeroTotalDeProductos = baseDeDatos.length;
-        let pageCont = Math.ceil(numeroTotalDeProductos / productosPorPagina);
-        pagination.html("");
-        for (let i = 1; i <= pageCont; i++) {
-          pagination.append(
+      function setPagination(dataBase) {
+        let totalPostsNumber = dataBase.length;
+        let numberOfPages = Math.ceil(totalPostsNumber / postsPerPage);
+        paginationContainer.html("");
+        for (let i = 1; i <= numberOfPages; i++) {
+          paginationContainer.append(
             '<li ><a href = "#" class = "page-number">' + i + "</a></li>"
           );
         }
 
-    document.querySelectorAll(".page-number").forEach((p_n, index) => {
-          p_n.onclick = function () {
+        document.querySelectorAll(".page-number").forEach((e, index) => {
+          e.onclick = function () {
             mostrarNumDePaginas(index + 1);
-            DOMitems.html("");
-            showDbContent(baseDeDatos, index + 1);
+
+            DOMitems.text("Cargando...");
+            setTimeout(() => {
+              DOMitems.html("");
+              showDbContent(dataBase, index + 1);
+            }, 1000);
           };
         });
         mostrarNumDePaginas(1);
 
-        function mostrarNumDePaginas(p_n) {
-          numeroDePaginaTop.html(
-            `<p id = "numero-pagina">Pagina ${p_n} de ${pageCont}</p>`
+        function mostrarNumDePaginas(pageNumber) {
+          PaginationInfoTop.html(
+            `<p id = "numero-pagina">Pagina ${pageNumber} de ${numberOfPages}</p>`
           );
         }
       }
 
-      function showDbContent(e, numero) {
-        let r = numero - 1;
-        let ct = "";
-        e = e.slice(
-          (numero - 1) * productosPorPagina,
-          numero * productosPorPagina
+      function showDbContent(dataBase, pageNumber) {
+        let linkAlPost = "";
+        let postContent = "";
+        let r = pageNumber - 1;
+        dataBase = dataBase.slice(
+          (pageNumber - 1) * postsPerPage,
+          pageNumber * postsPerPage
         );
-        let pageFocus = $(".page-number");
-        pageFocus.addClass("page-li__focus");
-        let item1 = $(".page-number")[r];
-        $("#pagination li").find(item1).removeClass("page-li__focus");
-        e.map((info) => {
+        $(".page-number").removeClass("page-li__focus");
+
+        let pageNumberWithFocus = $(".page-number")[r];
+        $("#pagination li")
+          .find(pageNumberWithFocus)
+          .addClass("page-li__focus");
+        dataBase.map((post) => {
           const miNodo = document.createElement("div");
           miNodo.classList.add("post-searched__content");
-          let $c = $("<div>").html(info.content.$t);
+          let $c = $("<div>").html(post.content.$t);
           if ($c.find("p#descripcionDelPost").text()) {
             let content = $c.find("p#descripcionDelPost").text();
-            ct = content;
+            postContent = content;
           } else {
             let x =
               "EDEPTEC: Proyectos electrónicos con micro-controladores, compuertas lógicas. Aplicaciones creadas en App Inventor, simulaciones en Cade Simu, creaciones DIY muchas cosas mas.";
-            ct = x;
+            postContent = x;
           }
-          for (let j = 0; j < info.link.length; j++) {
-            if (info.link[j].rel == "alternate") {
-              linkAlPost = info.link[j].href;
+          for (let j = 0; j < post.link.length; j++) {
+            if (post.link[j].rel == "alternate") {
+              linkAlPost = post.link[j].href;
               break;
             }
           }
-          let datePublish = info.published.$t,
+          let datePublish = post.published.$t,
             tPublish = datePublish.substring(0, 4),
             wPublish = datePublish.substring(5, 7),
             fPublish = datePublish.substring(8, 10),
-            rPublish =
+            postDatePublished =
               month_format[parseInt(wPublish, 10)] +
               " " +
               fPublish +
               ", " +
               tPublish;
-          let dateUpdate = info.updated.$t,
+          let dateUpdate = post.updated.$t,
             tUpdate = dateUpdate.substring(0, 4),
             wUpdate = dateUpdate.substring(5, 7),
             fUpdate = dateUpdate.substring(8, 10),
-            rUpdate =
+            postDateUpdated =
               month_format[parseInt(wUpdate, 10)] +
               " " +
               fUpdate +
               ", " +
               tUpdate;
           const texto_divs = `
-      <a class = "post-content__url" href = "${linkAlPost}"><p>${info.title.$t}</p></a>
+      <a class = "post-content__url" href = "${linkAlPost}"><p>${post.title.$t}</p></a>
         <div class="post-content__info">
-                  <p>${ct}</p>
+                  <p>${postContent}</p>
                 </div>
                 <div class="post-content__ad">
-                    <span><b>Autor:</b> ${info.author[0].name.$t}</span>|
-                    <span><b>Fecha de publicación:</b> ${rPublish}</span>|
-                    <span><b>Ultima actualización:</b> ${rUpdate}</span>
+                    <span><b>Autor:</b> ${post.author[0].name.$t}</span>|
+                    <span><b>Fecha de publicación:</b> ${postDatePublished}</span>|
+                    <span><b>Ultima actualización:</b> ${postDateUpdated}</span>
               </div>`;
           miNodo.innerHTML = texto_divs;
 
           DOMitems.append(miNodo);
         });
       }
+    },
+    complete: function () {
+      console.log("Done");
     },
   });
 });
