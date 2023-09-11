@@ -206,7 +206,7 @@ $(document).ready(function () {
               ", " +
               tUpdate;
           const texto_divs = `
-      <a targer ="_blank" class = "post-content__url" href = "${linkAlPost}"><p>${
+      <a target ="_blank" class = "post-content__url" href = "${linkAlPost}"><p>${
             post.title.$t
           }</p></a>
         <p class="post-content__info">
