@@ -1,31 +1,33 @@
 import("./style.css");
 
 $(document).ready(function () {
-  const blogUrl = `https://www.edeptec.com/feeds/posts/default/?alt=json-in-script&max-results=500`;
-  let month_format = [
-    ,
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sept",
-    "Oct",
-    "Nov",
-    "Dec",
-  ];
+  const searchSettings = {
+    resultsPerPage: 10,
+    blogUrl: "https://www.edeptec.com",
+    monthFormat: [
+      ,
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sept",
+      "Oct",
+      "Nov",
+      "Dec",
+    ],
+  };
 
-  const DOMitems = $(".post-searched__container");
+  const blogUrl = `${searchSettings.blogUrl}/feeds/posts/default/?alt=json-in-script&max-results=500`;
+
+  const DOMitems = $(".search-results-container");
   let postsPageSearch = $("#postsPageSearch");
   let postPageSearchBtn = $("#postPageSearchBtn");
-  let textoDeBusqueda = $(".searchText");
-  let searchInputTitle = $(".search-input__logo");
-  let PaginationInfoTop = $(".pagination-container.top-1");
-  let paginationContainer = $("#pagination");
-  let svg_edeptec = $(".header-logo a").html();
+  let searchInputTitle = $(".search-logo");
+  let searchInfo = $(".posts-search-info");
 
   $.ajax({
     url: blogUrl,
@@ -47,24 +49,29 @@ $(document).ready(function () {
         text = text.replace(/\s\s+/g, "\n");
         text.trim();
         if (!text.match(re)) {
-          textoDeBusqueda.text(
-            "Error, ingrese un termino de busqueda con numeros o letras."
+          searchInfo.text(
+            "Error, No se admiten caracteres especiales como terminos de busqueda."
           );
           searchInputTitle.show();
-          PaginationInfoTop.html("");
           DOMitems.html("");
-          paginationContainer.html("");
         } else {
-          searchInputTitle.hide();
           DOMitems.text("Cargando...");
           setTimeout(() => {
+            searchInputTitle.hide();
+            DOMitems.html(`
+            
+      <p class="pagination-container-info"></p>
+      <div class="posts-results-container"></div>
+      <div class="pagination-container"><ul id="pagination"></ul></div>
+            `);
             dbFiltering(dataBase, text);
           }, 1000);
         }
       }
 
       function dbFiltering(dataBase, text) {
-        DOMitems.html("");
+        let PaginationInfoTop = $(".pagination-container-info");
+        let paginationContainer = $("#pagination");
         let tagsArray = [];
         let tagsString = "";
 
@@ -73,7 +80,7 @@ $(document).ready(function () {
           let postsContent = posts.content.$t.toLowerCase();
           let postContentWithoutSpaces = postsContent.replace("\n", "");
           tagsArray.push(
-            ...posts.category.map((postsTerms) => {
+            posts.category.map((postsTerms) => {
               return postsTerms.term;
             })
           );
@@ -95,25 +102,29 @@ $(document).ready(function () {
         });
 
         if (filteredResults.length) {
-          textoDeBusqueda.html(
+          searchInfo.html(
             `Se encontaron <b id = "nResultados">${filteredResults.length}</b> resultados para el termino de busqueda : <b>"${text}"</b>`
           );
 
           setPagination(filteredResults);
           showDbContent(filteredResults, 1);
         } else {
-          textoDeBusqueda.html(
+          searchInfo.html(
             `No Se encontaron resultados para el termino de busqueda : <b>"${text}"</b>`
           );
           PaginationInfoTop.html("");
           paginationContainer.html("");
         }
       }
-      let postsPerPage = 10;
 
       function setPagination(dataBase) {
+        let PaginationInfoTop = $(".pagination-container-info");
+        let paginationContainer = $("#pagination");
+
         let totalPostsNumber = dataBase.length;
-        let numberOfPages = Math.ceil(totalPostsNumber / postsPerPage);
+        let numberOfPages = Math.ceil(
+          totalPostsNumber / searchSettings.resultsPerPage
+        );
         paginationContainer.html("");
         for (let i = 1; i <= numberOfPages; i++) {
           paginationContainer.append(
@@ -122,12 +133,13 @@ $(document).ready(function () {
         }
 
         document.querySelectorAll(".page-number").forEach((e, index) => {
+          const postsResultsContainer = $(".posts-results-container");
           e.onclick = function () {
             mostrarNumDePaginas(index + 1);
 
-            DOMitems.text("Cargando...");
+            postsResultsContainer.text("Cargando...");
             setTimeout(() => {
-              DOMitems.html("");
+              postsResultsContainer.html("");
               showDbContent(dataBase, index + 1);
             }, 1000);
           };
@@ -136,25 +148,25 @@ $(document).ready(function () {
 
         function mostrarNumDePaginas(pageNumber) {
           PaginationInfoTop.html(
-            `<p id = "numero-pagina">Pagina ${pageNumber} de ${numberOfPages}</p>`
+            `<p>Pagina ${pageNumber} de ${numberOfPages}</p>`
           );
         }
       }
 
       function showDbContent(dataBase, pageNumber) {
+        const postsResultsContainer = $(".posts-results-container");
+
         let linkAlPost = "";
         let postContent = "";
         let r = pageNumber - 1;
         dataBase = dataBase.slice(
-          (pageNumber - 1) * postsPerPage,
-          pageNumber * postsPerPage
+          (pageNumber - 1) * searchSettings.resultsPerPage,
+          pageNumber * searchSettings.resultsPerPage
         );
-        $(".page-number").removeClass("page-li__focus");
+        $(".page-number").removeClass("page-li-focus");
 
         let pageNumberWithFocus = $(".page-number")[r];
-        $("#pagination li")
-          .find(pageNumberWithFocus)
-          .addClass("page-li__focus");
+        $("#pagination li").find(pageNumberWithFocus).addClass("page-li-focus");
         dataBase.map((post) => {
           const miNodo = document.createElement("div");
           miNodo.classList.add("post-searched__content");
@@ -178,7 +190,7 @@ $(document).ready(function () {
             wPublish = datePublish.substring(5, 7),
             fPublish = datePublish.substring(8, 10),
             postDatePublished =
-              month_format[parseInt(wPublish, 10)] +
+              searchSettings.monthFormat[parseInt(wPublish, 10)] +
               " " +
               fPublish +
               ", " +
@@ -188,24 +200,29 @@ $(document).ready(function () {
             wUpdate = dateUpdate.substring(5, 7),
             fUpdate = dateUpdate.substring(8, 10),
             postDateUpdated =
-              month_format[parseInt(wUpdate, 10)] +
+              searchSettings.monthFormat[parseInt(wUpdate, 10)] +
               " " +
               fUpdate +
               ", " +
               tUpdate;
           const texto_divs = `
-      <a class = "post-content__url" href = "${linkAlPost}"><p>${post.title.$t}</p></a>
-        <div class="post-content__info">
-                  <p>${postContent}</p>
-                </div>
-                <div class="post-content__ad">
-                    <span><b>Autor:</b> ${post.author[0].name.$t}</span>|
-                    <span><b>Fecha de publicación:</b> ${postDatePublished}</span>|
+      <a targer ="_blank" class = "post-content__url" href = "${linkAlPost}"><p>${
+            post.title.$t
+          }</p></a>
+        <p class="post-content__info">
+                  <span class ="post-date" >${postDatePublished}</span> - ${postContent}
+                </p>
+                <p class="post-content-tags">${post.category
+                  .map((e) => `<span class= "tag-text">${e.term}</span>`)
+                  .join("")}</p>
+                
+                <p class="post-content__ad">
+                    <span><b>Autor:</b> ${post.author[0].name.$t}</span> |
                     <span><b>Ultima actualización:</b> ${postDateUpdated}</span>
-              </div>`;
+              </p>`;
           miNodo.innerHTML = texto_divs;
 
-          DOMitems.append(miNodo);
+          postsResultsContainer.append(miNodo);
         });
       }
     },
