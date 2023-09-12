@@ -81,6 +81,12 @@ a.post-content__url {
   width: 100%;
 }
 
+.loading {
+  font-size: 2rem;
+  text-align: center;
+}
+
+
 .pagination-container,
 .pagination-container-info {
   display: flex;
@@ -95,10 +101,13 @@ span#postPageSearchBtn {
   text-align: center;
 }
 .posts-results-container {
-  display: grid;
-  gap: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  min-height: 100vh;
 }
 .post-searched__content {
+  
   display: grid;
   gap: 0.5rem;
 }

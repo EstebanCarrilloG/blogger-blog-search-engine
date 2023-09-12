@@ -5,7 +5,6 @@ $(document).ready(function () {
     resultsPerPage: 10,
     blogUrl: "https://www.edeptec.com",
     monthFormat: [
-      ,
       "Jan",
       "Feb",
       "Mar",
@@ -21,16 +20,17 @@ $(document).ready(function () {
     ],
   };
 
-  const blogUrl = `${searchSettings.blogUrl}/feeds/posts/default/?alt=json-in-script&max-results=500`;
+  const url = `${searchSettings.blogUrl}/feeds/posts/default/?alt=json-in-script&max-results=500`;
 
   const DOMitems = $(".search-results-container");
   let postsPageSearch = $("#postsPageSearch");
   let postPageSearchBtn = $("#postPageSearchBtn");
   let searchInputTitle = $(".search-logo");
   let searchInfo = $(".posts-search-info");
+  const loadingElement = `<div class="loading">Cargando...</div>`;
 
   $.ajax({
-    url: blogUrl,
+    url: url,
     type: "get",
     dataType: "jsonp",
     success: function (dataBase) {
@@ -48,6 +48,11 @@ $(document).ready(function () {
         let text = postsPageSearch.val().toLowerCase();
         text = text.replace(/\s\s+/g, "\n");
         text.trim();
+        const searchResultsContent = ` 
+          <p class="pagination-container-info"></p>
+          <div class="posts-results-container"></div>
+          <div class="pagination-container"><ul id="pagination"></ul></div>`;
+
         if (!text.match(re)) {
           searchInfo.text(
             "Error, No se admiten caracteres especiales como terminos de busqueda."
@@ -55,49 +60,36 @@ $(document).ready(function () {
           searchInputTitle.show();
           DOMitems.html("");
         } else {
-          DOMitems.text("Cargando...");
+          DOMitems.html(loadingElement);
           setTimeout(() => {
             searchInputTitle.hide();
-            DOMitems.html(`
-            
-      <p class="pagination-container-info"></p>
-      <div class="posts-results-container"></div>
-      <div class="pagination-container"><ul id="pagination"></ul></div>
-            `);
-            dbFiltering(dataBase, text);
+            DOMitems.html(searchResultsContent);
+            dataBaseFiltering(dataBase, text);
           }, 1000);
         }
       }
 
-      function dbFiltering(dataBase, text) {
+      function dataBaseFiltering(dataBase, text) {
         let PaginationInfoTop = $(".pagination-container-info");
         let paginationContainer = $("#pagination");
         let tagsArray = [];
-        let tagsString = "";
 
         let filteredResults = dataBase.feed.entry.filter((posts) => {
           let postsTitle = posts.title.$t.toLowerCase();
-          let postsContent = posts.content.$t.toLowerCase();
-          let postContentWithoutSpaces = postsContent.replace("\n", "");
-          tagsArray.push(
-            posts.category.map((postsTerms) => {
-              return postsTerms.term;
-            })
-          );
+          let postsContent = posts.content.$t.toLowerCase().replace("\n", "");
 
-          for (let i = 0; i < tagsArray.length; i++) {
-            tagsString = tagsArray[i].toString();
-          }
-          let tagsText = tagsString.toLowerCase();
+          tagsArray = posts.category.map((postsTerms) => {
+            return postsTerms.term.toString();
+          });
 
-          if (tagsText.indexOf(text) !== -1) {
-            return tagsText.indexOf(text) !== -1;
-          }
-          if (postsTitle.indexOf(text) !== -1) {
+          tagsArray = tagsArray.toString().toLowerCase();
+
+          if (tagsArray.indexOf(text) !== -1) {
+            return tagsArray;
+          } else if (postsTitle.indexOf(text) !== -1) {
             return postsTitle;
-          }
-          if (postContentWithoutSpaces.indexOf(text) !== -1) {
-            return postContentWithoutSpaces;
+          } else if (postsContent.indexOf(text) !== -1) {
+            return postsContent;
           }
         });
 
@@ -105,9 +97,8 @@ $(document).ready(function () {
           searchInfo.html(
             `Se encontaron <b id = "nResultados">${filteredResults.length}</b> resultados para el termino de busqueda : <b>"${text}"</b>`
           );
-
           setPagination(filteredResults);
-          showDbContent(filteredResults, 1);
+          renderContent(filteredResults, 1);
         } else {
           searchInfo.html(
             `No Se encontaron resultados para el termino de busqueda : <b>"${text}"</b>`
@@ -137,10 +128,10 @@ $(document).ready(function () {
           e.onclick = function () {
             mostrarNumDePaginas(index + 1);
 
-            postsResultsContainer.text("Cargando...");
+            postsResultsContainer.html(loadingElement);
             setTimeout(() => {
               postsResultsContainer.html("");
-              showDbContent(dataBase, index + 1);
+              renderContent(dataBase, index + 1);
             }, 1000);
           };
         });
@@ -153,20 +144,21 @@ $(document).ready(function () {
         }
       }
 
-      function showDbContent(dataBase, pageNumber) {
+      function renderContent(dataBase, pageNumber) {
         const postsResultsContainer = $(".posts-results-container");
 
-        let linkAlPost = "";
+        let postLink = "";
         let postContent = "";
-        let r = pageNumber - 1;
+
         dataBase = dataBase.slice(
           (pageNumber - 1) * searchSettings.resultsPerPage,
           pageNumber * searchSettings.resultsPerPage
         );
         $(".page-number").removeClass("page-li-focus");
 
-        let pageNumberWithFocus = $(".page-number")[r];
+        let pageNumberWithFocus = $(".page-number")[pageNumber - 1];
         $("#pagination li").find(pageNumberWithFocus).addClass("page-li-focus");
+
         dataBase.map((post) => {
           const miNodo = document.createElement("div");
           miNodo.classList.add("post-searched__content");
@@ -181,7 +173,7 @@ $(document).ready(function () {
           }
           for (let j = 0; j < post.link.length; j++) {
             if (post.link[j].rel == "alternate") {
-              linkAlPost = post.link[j].href;
+              postLink = post.link[j].href;
               break;
             }
           }
@@ -206,7 +198,7 @@ $(document).ready(function () {
               ", " +
               tUpdate;
           const texto_divs = `
-      <a target ="_blank" class = "post-content__url" href = "${linkAlPost}"><p>${
+      <a target ="_blank" class = "post-content__url" href = "${postLink}"><p>${
             post.title.$t
           }</p></a>
         <p class="post-content__info">
@@ -215,7 +207,6 @@ $(document).ready(function () {
                 <p class="post-content-tags">${post.category
                   .map((e) => `<span class= "tag-text">${e.term}</span>`)
                   .join("")}</p>
-                
                 <p class="post-content__ad">
                     <span><b>Autor:</b> ${post.author[0].name.$t}</span> |
                     <span><b>Ultima actualización:</b> ${postDateUpdated}</span>
@@ -223,6 +214,7 @@ $(document).ready(function () {
           miNodo.innerHTML = texto_divs;
 
           postsResultsContainer.append(miNodo);
+          return 0;
         });
       }
     },
