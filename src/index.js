@@ -78,9 +78,11 @@ $(document).ready(function () {
           let postsTitle = posts.title.$t.toLowerCase();
           let postsContent = posts.content.$t.toLowerCase().replace("\n", "");
 
-          tagsArray = posts.category.map((postsTerms) => {
-            return postsTerms.term.toString();
-          });
+          posts.category !== undefined
+            ? (tagsArray = posts.category.map((postsTerms) => {
+                return postsTerms.term.toString();
+              }))
+            : (tagsArray = ["No tags found"]);
 
           tagsArray = tagsArray.toString().toLowerCase();
 
@@ -204,9 +206,13 @@ $(document).ready(function () {
         <p class="post-content__info">
                   <span class ="post-date" >${postDatePublished}</span> - ${postContent}
                 </p>
-                <p class="post-content-tags">${post.category
-                  .map((e) => `<span class= "tag-text">${e.term}</span>`)
-                  .join("")}</p>
+                <p class="post-content-tags">${
+                  post.category !== undefined
+                    ? post.category
+                        .map((e) => `<span class= "tag-text">${e.term}</span>`)
+                        .join("")
+                    : `<span class= "tag-text">No tags found</span>`
+                }</p>
                 <p class="post-content__ad">
                     <span><b>Autor:</b> ${post.author[0].name.$t}</span> |
                     <span><b>Ultima actualización:</b> ${postDateUpdated}</span>
