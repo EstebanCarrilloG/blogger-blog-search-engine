@@ -3,7 +3,7 @@ import("./style.css");
 $(document).ready(function () {
   const searchSettings = {
     resultsPerPage: 10,
-    blogUrl: "https://www.edeptec.com",
+    blogUrl: "",
     monthFormat: [
       "Jan",
       "Feb",
