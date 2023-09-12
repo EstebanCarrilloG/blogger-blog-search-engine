@@ -8,5 +8,3 @@
   <li>JavaScript - jQuery</li>
   <li>Webpack</li>
 </ul>
-
-
