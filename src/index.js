@@ -84,7 +84,7 @@ $(document).ready(function () {
 
           tagsArray = tagsArray.toString().toLowerCase();
 
-          if (tagsArray.indexOf(text) !== -1) {
+          if (tagsArray.indexOf(text) !==  -1) {
             return tagsArray;
           } else if (postsTitle.indexOf(text) !== -1) {
             return postsTitle;
