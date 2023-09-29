@@ -1,5 +1,6 @@
 const htmlWebpackPluging = require('html-webpack-plugin');
 const { template } = require('webpack');
+const webpack = require('webpack');
 
 module.exports = {
 
@@ -20,6 +21,11 @@ module.exports = {
        
     },
     plugins: [
+        new webpack.ProvidePlugin({
+            $: 'jquery',
+            jQuery: 'jquery'
+
+        }),
         new htmlWebpackPluging({
             filename:'index.html',
             template: './src/index.html'
