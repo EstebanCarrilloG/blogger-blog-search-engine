@@ -1,7 +1,8 @@
 import("./style.css");
 
-$(document).ready(function () {
+$(function() {
   const searchSettings = {
+    textOrImgUrl:"https://blogger.googleusercontent.com/img/a/AVvXsEhN2fKgWugf8DjSYlKOil5B3_VvaVdSVAYDcxQwUKth65PYPYYaum9P06ecaJzkR8RmBtVdLFGZHDCO2qzGOv8V9FAj0qNk6fsI3-nlic6UI_v_dQOgrgKohoTUqIl7gnzNCTX1i0cBB9Ii_Pq9-eUs5YQY_1Tpwbk9_-zuVC4chjBqkQPj6fX_BvLfb9Q=s1103",
     resultsPerPage: 10,
     blogUrl: "",
     monthFormat: [
@@ -19,6 +20,10 @@ $(document).ready(function () {
       "Dec",
     ],
   };
+
+  const logo = $("#logo")
+
+  logo.html(searchSettings.textOrImgUrl.match("https://")? `<img src="${searchSettings.textOrImgUrl}" alt="Logo del blog">`: `<p>${searchSettings.textOrImgUrl}</p>`)
 
   const url = `${searchSettings.blogUrl}/feeds/posts/default/?alt=json-in-script&max-results=500`;
 

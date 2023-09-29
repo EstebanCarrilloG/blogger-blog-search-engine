@@ -19,168 +19,175 @@
   box-sizing: border-box;
   word-wrap: break-word;
 }
-body{
-  font-family: var(--tipo-principal);
+body {
+  font-family: var(--tipo-principal) !important;
 }
 .page-number,
 .post-content__ad,
 .post-content__info,
 a.post-content__url {
-  text-decoration: none;
+  text-decoration: none !important;
 }
 .posts-search-container {
-  display: flex;
-  padding: 5rem 0;
-  gap: 1rem;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
+  display: flex !important;
+  padding: 5rem 0 !important;
+  gap: 1rem !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 100vh !important;
 }
 
-.container{
-  max-width: 90%;
-  margin: 0 auto;
-
+.container {
+  max-width: 90% !important;
+  margin: 0 auto !important;
 }
 .search-logo {
-  margin-bottom: 5rem;
-  width: 100%;
-  height: 3.9rem;
-  font-size: 4rem;
-  text-align: center;
+  margin-bottom: 3rem !important;
+  width: 100% !important;
+  height: max-content;
+  font-size: 4rem !important;
+  text-align: center !important;
 }
 
-.search-input-container  {
-  display: flex;
-  align-items: center;
-  gap: 0.2rem;
-  justify-content: center;
-  border: 0.125rem solid var(--color-terciario);
-  border-radius: 1.875rem;
-  transition: box-shadow 180ms ease-in-out;
-  margin-bottom: 0.5rem;
-  min-width: 50%;
-  max-width: 90%;
-  padding: 1rem 2rem;
+.search-logo img {
+  width: 40% !important;
+}
+.search-input-container {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.2rem !important;
+  justify-content: center !important;
+  border: 0.125rem solid var(--color-terciario) !important;
+  border-radius: 1.875rem !important;
+  transition: box-shadow 180ms ease-in-out !important;
+  margin-bottom: 0.5rem !important;
+  min-width: 50% !important;
+  max-width: 90% !important;
+  padding: 1rem 2rem !important;
 }
 .search-input-container input {
-  font-size: 1.5rem;
-  font-family: inherit;
-  background-color: #fff;
-  border: none;
-  color: var(--color-primario);
-  width: 100%;
+  font-size: 1.5rem !important;
+  font-family: inherit !important;
+  background-color: #fff !important;
+  border: none !important;
+  color: var(--color-primario) !important;
+  width: 100% !important;
 }
 
-.search-input-container  input:focus{
-  outline: none;
-
+.search-input-container input:focus {
+  outline: none !important;
 }
 .search-results-container {
-  width: 100%;
+  width: 100% !important;
 }
 
 .loading {
-  font-size: 2rem;
-  text-align: center;
+  font-size: 2rem !important;
+  text-align: center !important;
 }
-
 
 .pagination-container,
 .pagination-container-info {
-  display: flex;
-  justify-content: center;
+  display: flex !important;
+  justify-content: center !important;
 }
 span#postPageSearchBtn {
-  cursor: pointer;
-  padding: 0.5rem;
+  cursor: pointer !important;
+  padding: 0.5rem !important;
 }
 .posts-search-info {
-  padding: 1.8rem 2rem;
-  text-align: center;
+  padding: 1.8rem 2rem !important;
+  text-align: center !important;
 }
 .posts-results-container {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-  min-height: 100vh;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2rem !important;
+  min-height: 100vh !important;
 }
 .post-searched__content {
-  
-  display: grid;
-  gap: 0.5rem;
+  display: grid !important;
+  gap: 0.5rem !important;
 }
 
 .post-searched__content a {
-  color: var(--color-titulos);
+  color: var(--color-titulos) !important;
 }
 
 a.post-content__url p {
-  font-weight: bold;
-  font-size: 1.7rem;
-  line-height: 2rem;
-  margin-bottom: initial;
+  font-weight: bold !important;
+  font-size: 1.7rem !important;
+  line-height: 2rem !important;
+  margin-bottom: initial !important;
 }
-.post-date, .post-content-tags {
-  color: #a3a3a3;
+.post-date,
+.post-content-tags {
+  color: #a3a3a3 !important;
 }
 
-.post-content-tags{
-  display: flex;
-  gap: .5rem;
-  flex-wrap: wrap;
+.post-content-tags {
+  display: flex !important;
+  gap: 0.5rem !important;
+  flex-wrap: wrap !important;
 }
-.tag-text{
-  border: 0.06rem solid;
-  padding: 0.2rem 0.5rem;
-  
+.tag-text {
+  border: 0.06rem solid !important;
+  padding: 0.2rem 0.5rem !important;
 }
 a.post-content__url:hover {
-  color: var(--color-texto-p);
-  text-decoration: underline;
+  color: var(--color-texto-p) !important;
+  text-decoration: underline !important;
 }
 .post-content__info {
-  padding-left: 1rem;
+  padding-left: 1rem !important;
 }
 .pagination-container-info p {
-  border: 0.125rem solid var(--color-terciario);
-  padding: 0.5rem 1rem;
-  margin-bottom: 2rem;
+  border: 0.125rem solid var(--color-terciario) !important;
+  padding: 0.5rem 1rem !important;
+  margin-bottom: 2rem !important;
 }
 ul#pagination {
-  display: flex;
-  list-style: none;
-  gap: 0.5rem;
-  row-gap: 1.5rem;
-  flex-wrap: wrap;
-  margin-top: 3rem;
-  justify-content: center;
-  align-items: center;
+  display: flex !important;
+  list-style: none !important;
+  gap: 0.5rem !important;
+  row-gap: 1.5rem !important;
+  flex-wrap: wrap !important;
+  margin-top: 3rem !important;
+  justify-content: center !important;
+  align-items: center !important;
 }
 ul#pagination li:before {
-  content: "";
+  content: "" !important;
 }
 .page-number {
-  color: #fff;
-  background-color: var(--color-terciario);
-  padding: 0.5rem 1rem;
+  color: #fff !important;
+  background-color: var(--color-terciario) !important;
+  padding: 0.5rem 1rem !important;
 }
 .page-li-focus {
-  background: var(--color-secundario);
+  background: var(--color-secundario) !important;
 }
-
-@media screen and (max-width: 1024px) {
-  
-}
-@media screen and (max-width: 700px) {
-  .search-input-container {
-    width: 90%;
+@media screen and (max-width: 768px) {
+  .search-logo img {
+    width: 70% !important;
   }
+  .search-input-container {
+    width: 90% !important;
+  }
+  .search-logo {
+    margin-bottom: 1rem !important;
 }
-@media screen and (max-width: 682px) {
- 
 }
-@media screen and (max-width: 585px) {
 
+@media screen and (min-width: 768px) and (max-width: 1024px) {
+  .search-logo img {
+    width: 50% !important;
+  }
+  .search-input-container {
+    width: 80% !important;
+  }
+  .search-logo {
+    margin-bottom: 2rem !important;
+}
 }
