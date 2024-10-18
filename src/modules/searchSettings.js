@@ -3,6 +3,7 @@ export const searchSettings = {
   resultsPerPage: 10,
   monthFormat: [
     // Formato del mes
+    "",
     "Ene",
     "Feb",
     "Mar",
