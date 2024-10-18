@@ -6,6 +6,8 @@ Previsualizacion:
 
 ![](./public/preview.png)
 
+Pueden ver el codigo mejor documentado y estructurado [aqui](https://github.com/EstebanCarrilloG/blogger-blog-search-engine/tree/2024-update)
+
 Descripción:
 ------------
 
@@ -96,6 +98,5 @@ Aclaraciones:
 Como en estamos usando el buscador en blogger no es necesario modificar el valor de la propiedad blogUrl. 
 ![imagen](./public/blogUrl-not-modified.png)
 Si vamos a utilizar el buscador en una pagina web diferente, si es necesario ingresar la url de nuestro blog en la propiedad blogUrl.
-
 
 
