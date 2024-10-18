@@ -154,7 +154,7 @@ function setPagination(data) {
     const postsResultsContainer = $(".posts-results-container");
     e.onclick = function () {
       // Show the number of the page that is being shown
-      mostrarNumDePaginas(index + 1);
+      pagesInfo(index + 1);
 
       // Add a loading element to the posts results container
       postsResultsContainer.html(loadingElement);
