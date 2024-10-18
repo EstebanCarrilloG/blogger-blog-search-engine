@@ -158,7 +158,7 @@ $(function () {
         document.querySelectorAll(".page-number").forEach((e, index) => {
           const postsResultsContainer = $(".posts-results-container");
           e.onclick = function () {
-            mostrarNumDePaginas(index + 1);
+            pagesInfo(index + 1);
 
             postsResultsContainer.html(loadingElement);
             setTimeout(() => {
