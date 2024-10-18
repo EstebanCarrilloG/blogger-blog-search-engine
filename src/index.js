@@ -1,34 +1,38 @@
 import("./style.css");
 
-$(function() {
+$(function () {
   const searchSettings = {
-    textOrImgUrl:"https://blogger.googleusercontent.com/img/a/AVvXsEhN2fKgWugf8DjSYlKOil5B3_VvaVdSVAYDcxQwUKth65PYPYYaum9P06ecaJzkR8RmBtVdLFGZHDCO2qzGOv8V9FAj0qNk6fsI3-nlic6UI_v_dQOgrgKohoTUqIl7gnzNCTX1i0cBB9Ii_Pq9-eUs5YQY_1Tpwbk9_-zuVC4chjBqkQPj6fX_BvLfb9Q=s1103",
+    textOrImgUrl: "Texto o logo del blog", // Texto o logo del blog
     resultsPerPage: 10,
     blogUrl: "",
     monthFormat: [
-      "Jan",
+      // Formato del mes
+      "",
+      "Ene",
       "Feb",
       "Mar",
-      "Apr",
+      "Abr",
       "May",
       "Jun",
       "Jul",
-      "Aug",
+      "Ago",
       "Sept",
       "Oct",
       "Nov",
-      "Dec",
+      "Dic",
     ],
   };
 
-  const logo = $("#logo")
-
-  logo.html(searchSettings.textOrImgUrl.match("https://")? `<img src="${searchSettings.textOrImgUrl}" alt="Logo del blog">`: `<p>${searchSettings.textOrImgUrl}</p>`)
+  $("#logo").html(
+    searchSettings.textOrImgUrl.match("^https?://")
+      ? `<img src="${searchSettings.textOrImgUrl}" alt="Logo del blog">` //
+      : `<p>${searchSettings.textOrImgUrl}</p>`
+  );
 
   const url = `${searchSettings.blogUrl}/feeds/posts/default/?alt=json-in-script&max-results=500`;
 
   const DOMitems = $(".search-results-container");
-  let postsPageSearch = $("#postsPageSearch");
+  let searchInput = $("#postsPageSearch");
   let postPageSearchBtn = $("#postPageSearchBtn");
   let searchInputTitle = $(".search-logo");
   let searchInfo = $(".posts-search-info");
@@ -38,25 +42,37 @@ $(function() {
     url: url,
     type: "get",
     dataType: "jsonp",
-    success: function (dataBase) {
-      postsPageSearch.keydown(function (Key) {
+    /**
+     * This function is the success callback of the AJAX request, it will be called when the data is loaded
+     * @param {Object} data The object that contains the blog posts
+     */
+    success: function (data) {
+      // Text validation, if the input text don't match with the regex, it will show an error message
+      // and won't search anything
+      searchInput.keydown(function (Key) {
         if (Key.keyCode === 13) {
-          textValidation(dataBase);
+          textValidation(data);
         }
       });
       postPageSearchBtn.click(function () {
-        textValidation(dataBase);
+        textValidation(data);
       });
 
-      function textValidation(dataBase) {
+      /**
+       * Validate the text inputed by the user
+       * @param {Object} data The object that contains the blog posts
+       */
+      function textValidation(data) {
         let re = new RegExp(/^[A-Za-z0-9\s]+$/g);
-        let text = postsPageSearch.val().toLowerCase();
+        let text = searchInput.val().toLowerCase();
         text = text.replace(/\s\s+/g, "\n");
         text.trim();
+
         const searchResultsContent = ` 
           <p class="pagination-container-info"></p>
           <div class="posts-results-container"></div>
-          <div class="pagination-container"><ul id="pagination"></ul></div>`;
+          <div class="pagination-container"><ul id="pagination"></ul></div>
+        `;
 
         if (!text.match(re)) {
           searchInfo.text(
@@ -69,19 +85,24 @@ $(function() {
           setTimeout(() => {
             searchInputTitle.hide();
             DOMitems.html(searchResultsContent);
-            dataBaseFiltering(dataBase, text);
+            dataFiltering(data.feed, text);
           }, 1000);
         }
       }
 
-      function dataBaseFiltering(dataBase, text) {
+      /**
+       * Filter the data posts by the text inputed by the user
+       * @param {Object} data The object that contains the blog posts
+       * @param {String} text The text inputed by the user
+       */
+      function dataFiltering(data, text) {
         let PaginationInfoTop = $(".pagination-container-info");
         let paginationContainer = $("#pagination");
         let tagsArray = [];
 
-        let filteredResults = dataBase.feed.entry.filter((posts) => {
+        let filteredResults = data.entry.filter((posts) => {
           let postsTitle = posts.title.$t.toLowerCase();
-          let postsContent = posts.content.$t.toLowerCase().replace("\n", "");
+          let postsContent = posts.content.$t.toLowerCase().replace(/\n/g, "");
 
           posts.category !== undefined
             ? (tagsArray = posts.category.map((postsTerms) => {
@@ -115,11 +136,15 @@ $(function() {
         }
       }
 
-      function setPagination(dataBase) {
+      /**
+       * Set the pagination, it will show the number of pages and the number of posts per page
+       * @param {Array} data The array that contains the filtered posts
+       */
+      function setPagination(data) {
         let PaginationInfoTop = $(".pagination-container-info");
         let paginationContainer = $("#pagination");
 
-        let totalPostsNumber = dataBase.length;
+        let totalPostsNumber = data.length;
         let numberOfPages = Math.ceil(
           totalPostsNumber / searchSettings.resultsPerPage
         );
@@ -138,26 +163,37 @@ $(function() {
             postsResultsContainer.html(loadingElement);
             setTimeout(() => {
               postsResultsContainer.html("");
-              renderContent(dataBase, index + 1);
+              renderContent(data, index + 1);
             }, 1000);
           };
         });
-        mostrarNumDePaginas(1);
-
-        function mostrarNumDePaginas(pageNumber) {
+        /**
+         * Function pagesInfo
+         * @description Function that shows the number of the page that is being shown
+         *              in the pagination container.
+         * @param {Number} pageNumber - Number of the page to render.
+         * @returns {void} - Nothing.
+         */
+        function pagesInfo(pageNumber) {
           PaginationInfoTop.html(
             `<p>Pagina ${pageNumber} de ${numberOfPages}</p>`
           );
         }
+        pagesInfo(1);
       }
 
-      function renderContent(dataBase, pageNumber) {
+      /**
+       * Render the content of the posts, it will show the title, content, tags, author, and date of the post
+       * @param {Array} data The array that contains the filtered posts
+       * @param {Number} pageNumber The number of the page
+       */
+      function renderContent(data, pageNumber) {
         const postsResultsContainer = $(".posts-results-container");
 
         let postLink = "";
         let postContent = "";
 
-        dataBase = dataBase.slice(
+        data = data.slice(
           (pageNumber - 1) * searchSettings.resultsPerPage,
           pageNumber * searchSettings.resultsPerPage
         );
@@ -166,16 +202,15 @@ $(function() {
         let pageNumberWithFocus = $(".page-number")[pageNumber - 1];
         $("#pagination li").find(pageNumberWithFocus).addClass("page-li-focus");
 
-        dataBase.map((post) => {
+        data.map((post) => {
           const miNodo = document.createElement("div");
           miNodo.classList.add("post-searched__content");
           let $c = $("<div>").html(post.content.$t);
-          if ($c.find("p#descripcionDelPost").text()) {
-            let content = $c.find("p#descripcionDelPost").text();
+          if ($c.find("p.blog-post-description").text()) {
+            let content = $c.find("p.blog-post-description").text();
             postContent = content;
           } else {
-            let x =
-              "EDEPTEC: Proyectos electrónicos con micro-controladores, compuertas lógicas. Aplicaciones creadas en App Inventor, simulaciones en Cade Simu, creaciones DIY muchas cosas mas.";
+            let x = "Descripcion del post";
             postContent = x;
           }
           for (let j = 0; j < post.link.length; j++) {
@@ -220,8 +255,9 @@ $(function() {
                 }</p>
                 <p class="post-content__ad">
                     <span><b>Autor:</b> ${post.author[0].name.$t}</span> |
-                    <span><b>Ultima actualización:</b> ${postDateUpdated}</span>
-              </p>`;
+                    <span><b>Ultima actualizacion:</b> ${postDateUpdated}</span>
+              </p>
+            `;
           miNodo.innerHTML = texto_divs;
 
           postsResultsContainer.append(miNodo);
