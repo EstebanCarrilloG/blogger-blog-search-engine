@@ -1,4 +1,4 @@
-Motor de búsqueda de blogs de Blogger
+Motor de búsqueda para blogs de Blogger
 =====================================
 
 Previsualizacion:
