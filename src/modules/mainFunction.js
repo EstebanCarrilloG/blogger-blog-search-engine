@@ -17,12 +17,12 @@ const loadingElement = `<div class="loading">Cargando...</div>`;
  * @returns {void} - Nothing.
  */
 export default function mainFunction(data) {
-  searchInput.keydown(function (Key) {
-    if (Key.keyCode === 13) {
+  searchInput.on( "keydown",function (Key) {
+    if (Key.key === 'Enter') {
       textValidation(data);
     }
   });
-  postPageSearchBtn.click(function () {
+  postPageSearchBtn.on("click",function () {
     textValidation(data);
   });
 }
@@ -263,7 +263,7 @@ function renderContent(data, pageNumber) {
       post.title.$t
     }</p></a>
       <p class="post-content__info">
-                <span class ="post-date" >${postDatePublished}</span> - ${postContent}
+                <span class ="post-date" >${postDatePublished}</span> - ${postContent.slice(0, 200)}${postContent.length > 200 ? "..." : ""} 
               </p>
               <p class="post-content-tags">${
                 post.category !== undefined
