@@ -1,34 +1,41 @@
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const webpack = require('webpack');
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const webpack = require("webpack");
+
+const isProduction = true; // Modo de ejecución
 
 module.exports = {
-    mode: 'production', // Modo de producción
-    entry: './src/index.js', // Archivo de entrada
-    output: {
-        path: __dirname + '/dist', // Carpeta de salida
-        filename: 'index.js', // Nombre del archivo generado
-    },
-    module: {
-        rules: [
-            {
-                test: /\.css$/i, // Procesar archivos CSS
-                use: ['style-loader', 'css-loader'],
-            },
-        ],
-    },
-    externals: {
-        jquery: 'jQuery', // No incluir jQuery en el bundle, tomarlo como global o externo
-    },
-    plugins: [
-        // Permitir el uso de jQuery como $ y jQuery
-        new webpack.ProvidePlugin({
-            $: 'jquery',
-            jQuery: 'jquery',
-        }),
-        // Plugin para inyectar tu bundle en el archivo HTML
-        new HtmlWebpackPlugin({
-            filename: 'index.html',
-            template: './src/index.html',
-        }),
+  mode: isProduction ? "production" : "development",
+  entry: "./src/index.js",
+  output: {
+    path: __dirname + "/dist",
+    filename: "index.js",
+  },
+  module: {
+    rules: [
+      {
+        test: /\.css$/i,
+        use: ["style-loader", "css-loader"],
+      },
     ],
+  },
+  externals: isProduction
+    ? {
+        jquery: "jQuery", // Solo excluye jQuery en producción
+      }
+    : {},
+  plugins: [
+    new webpack.ProvidePlugin({
+      $: "jquery",
+      jQuery: "jquery",
+    }),
+    new HtmlWebpackPlugin({
+      filename: "index.html",
+      template: "./src/index.html",
+    }),
+  ],
+  devServer: {
+    static: "./dist",
+    port: 3000,
+    open: true,
+  },
 };
