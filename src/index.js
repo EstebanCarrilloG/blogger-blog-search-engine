@@ -1,4 +1,4 @@
-import("./style.css");
+//import("./style.css"); //uncomment this line on development mode
 import { data } from "./modules/apiConnection.js";
 import { searchSettings } from "./modules/searchSettings.js";
 import mainFunction from "./modules/mainFunction.js";
