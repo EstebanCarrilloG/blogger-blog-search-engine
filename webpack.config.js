@@ -1,4 +1,6 @@
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const webpack = require("webpack");
 
 const isProduction = true; // Modo de ejecución
@@ -9,12 +11,13 @@ module.exports = {
   output: {
     path: __dirname + "/dist",
     filename: "index.js",
+    clean: true,
   },
   module: {
     rules: [
       {
         test: /\.css$/i,
-        use: ["style-loader", "css-loader"],
+        use: [MiniCssExtractPlugin.loader, "css-loader"],
       },
     ],
   },
@@ -24,15 +27,22 @@ module.exports = {
       }
     : {},
   plugins: [
-    new webpack.ProvidePlugin({
-      $: "jquery",
-      jQuery: "jquery",
-    }),
+    new MiniCssExtractPlugin({ filename: "style.css" }),
+    !isProduction &&
+      new webpack.ProvidePlugin({
+        $: "jquery",
+        jQuery: "jquery",
+      }),
     new HtmlWebpackPlugin({
       filename: "index.html",
       template: "./src/index.html",
+      inject: "body",
     }),
   ],
+  optimization: {
+    minimize: isProduction,
+    minimizer: [`...`, new CssMinimizerPlugin()],
+  },
   devServer: {
     static: "./dist",
     port: 3000,
