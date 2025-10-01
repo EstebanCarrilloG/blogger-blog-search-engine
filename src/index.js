@@ -24,6 +24,7 @@ jQuery(function () {
   );
 
   let searchInput = $("#searchInput");
+  let postPageSearchBtn = $("#postPageSearchBtn");
 
   const url = new URL(window.location.href);
 
@@ -39,6 +40,10 @@ jQuery(function () {
 
   searchInput.on("input", function () {
     searchText = searchInput.val().toLocaleLowerCase();
+  });
+
+  postPageSearchBtn.on("click", function () {
+    handleSearch(searchText);
   });
 
   searchInput.on("keydown", function (Key) {
