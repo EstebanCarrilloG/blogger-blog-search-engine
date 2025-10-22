@@ -1,17 +1,8 @@
 :root {
-  --negro: #393939;
-  --tipo-principal: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  --tipo-secundaria: Verdana;
-  --max-width-container: 73.125rem;
-  --width-container: 95%;
   --color-primario: #313234;
-  --color-titulos: #313234;
   --color-secundario: #ff1a00;
   --color-terciario: #999999;
-  --color-white: white;
-  --color-de-fondo: white;
   --color-texto-p: #5e5e5e;
-  --bg-navChildren: #fb4834b0;
   --color-borde: #e0e0e0;
   --color-fondo-input: #f8f9fa;
   --sombra-suave: 0 2px 10px rgba(0, 0, 0, 0.08);
@@ -26,7 +17,6 @@
   word-wrap: break-word;
 }
 body {
-  font-family: var(--tipo-principal) !important;
   background-color: #f5f7fa;
   color: var(--color-primario);
   line-height: 1.6;
@@ -43,12 +33,6 @@ ul li {
   justify-content: flex-start !important;
   min-height: 100vh !important;
   display: flex !important;
-}
-
-.container {
-  max-width: 90% !important;
-  margin: 0 auto !important;
-  width: 100%;
 }
 
 .search-logo {
@@ -182,7 +166,7 @@ ul li {
 
 .post-content__url {
   text-decoration: none !important;
-  color: var(--color-titulos) !important;
+  color: var(--color-primario) !important;
 }
 
 .post-content__url p {

@@ -10,7 +10,7 @@ jQuery(function () {
           name=""
           id="searchInput"
           placeholder="Ingrese el termino de busqueda."
-        /><span id="postPageSearchBtn" class="fas fa-search"></span>
+        /><span id="postPageSearchBtn">🔎︎</span>
       </div>
       <p class="posts-search-info"></p>
       <div class="search-results-container" id="searchResultsContainer"></div>`);
