@@ -16,6 +16,18 @@ jQuery(function () {
       <div class="search-results-container" id="searchResultsContainer"></div>`);
 
   let searchInfo = $(".posts-search-info");
+  let searchInput = $("#searchInput");
+  let postPageSearchBtn = $("#postPageSearchBtn");
+
+  const url = new URL(window.location.href);
+
+  const params = url.searchParams;
+  const searchParam = params.get("search");
+
+  if (searchParam) {
+    handleSearch(searchParam);
+    searchInput.val(searchParam);
+  }
 
   $("#logo").append(
     searchSettings.textOrImgUrl.match("^https?://")
@@ -23,20 +35,9 @@ jQuery(function () {
       : `<p>${searchSettings.textOrImgUrl}</p>`
   );
 
-  let searchInput = $("#searchInput");
-  let postPageSearchBtn = $("#postPageSearchBtn");
-
-  const url = new URL(window.location.href);
-
-  const params = url.searchParams;
-
-  let searchText = "";
-
   searchInfo.html(`Bienvenido! Para comenzar ingrese el termino de busqueda.`);
 
-  if (params.get("search")) {
-    handleSearch(params.get("search"));
-  }
+  let searchText = "";
 
   searchInput.on("input", function () {
     searchText = searchInput.val().toLocaleLowerCase();
@@ -48,7 +49,6 @@ jQuery(function () {
 
   searchInput.on("keydown", function (Key) {
     if (Key.key !== "Enter") return;
-
     handleSearch(searchText);
   });
 });

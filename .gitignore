@@ -1,2 +1,6 @@
 **/node_modules
 .env
+
+
+/dist/main**
+/dist/src_style**
