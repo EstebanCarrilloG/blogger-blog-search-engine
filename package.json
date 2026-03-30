@@ -9,14 +9,15 @@
     "webpack": "^5.84.0"
   },
   "devDependencies": {
-    "css-minimizer-webpack-plugin": "^7.0.2",
+    "css-minimizer-webpack-plugin": "8.0.0",
+    "dotenv-webpack": "^9.0.0",
     "markdown-code-blocks": "^0.0.1",
     "mini-css-extract-plugin": "^2.9.4",
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^5.2.2"
   },
   "scripts": {
-    "build": "npx webpack",
-    "start": "npx webpack-dev-server"
+    "dev": "webpack serve",
+    "build": "webpack"
   }
 }
